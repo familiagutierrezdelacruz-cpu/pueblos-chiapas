@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1B5A45">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pueblos">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Pueblos de Chiapas</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2702,5 +2709,26 @@ window.__game={start:startGame,get s(){return{PL,ST,G,phase}},SQ};
 showHome();
 </script>
 
+<style>
+#pwaInstall{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:70;display:none;align-items:center;gap:8px;padding:10px 12px 10px 16px;border-radius:99px;background:#E39A12;color:#1d1403;font:700 15px/1 system-ui,sans-serif;box-shadow:0 6px 22px rgba(0,0,0,.45)}
+#pwaInstall.on{display:flex}
+#pwaInstall button{font:inherit;border:0;background:transparent;color:inherit;cursor:pointer;padding:6px 8px;min-height:36px}
+#pwaInstall .x{opacity:.7;font-weight:500}
+</style>
+<div id="pwaInstall" role="dialog" aria-label="Instalar la app"><button id="pwaGo" type="button">📲 Instalar app</button><button class="x" id="pwaNo" type="button" aria-label="Ahora no">✕</button></div>
+<script>
+(function(){
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+    window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});
+  }
+  var dp=null,bar=document.getElementById('pwaInstall');
+  var standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  var hid=false;try{hid=localStorage.getItem('pc_pwa_no')==='1'}catch(e){}
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;if(!standalone&&!hid)bar.classList.add('on')});
+  document.getElementById('pwaGo').onclick=function(){if(!dp)return;dp.prompt();dp.userChoice.finally(function(){dp=null;bar.classList.remove('on')})};
+  document.getElementById('pwaNo').onclick=function(){bar.classList.remove('on');try{localStorage.setItem('pc_pwa_no','1')}catch(e){}};
+  window.addEventListener('appinstalled',function(){bar.classList.remove('on')});
+})();
+</script>
 </body>
 </html>
